@@ -26,8 +26,27 @@ FROM ubuntu:20.04
 # would issue a RUN command for your application's build process to generate the
 # executable. For language-specific examples, take a look at the Dockerfiles in
 # the Awesome Compose repository: https://github.com/docker/awesome-compose
-WORKDIR /app
+
+#Seleção de diretório de trabalho no container
+WORKDIR /app 
+#Execução do comando "apt-get update no termina"
 RUN apt-get update
+#Instalação do GStreamer
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+#Instalação do CUDA 12.1
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.debsudo dpkg -i cuda-keyring_1.0-1_all.debsudo apt-get updatesudo apt-get -y install cuda
+#Instlação do CUDNN
+RUN sudo apt-get -y install cudnn9-cuda-12
+#Instalação do repositório CUDA
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.debsudo dpkg -i cuda-keyring_1.1-1_all.debsudo apt-get updatesudo apt-get -y install cuda-toolkit-12-3
+#Instalação do TensorRT
+RUN sudo apt-get install tensorrt-dev
+
+#Selecionando a versão do CUDA e do TensorRT
+RUN version="8.6.1-1+cuda12.1"
+RUN sudo apt-get install tensorrt-dev=${version}
+RUN sudo apt-mark hold tensorrt-dev
+#Instalação do GCC para compilação dos códigos C++
 RUN apt-get install -y gcc-4.4
+#Comando inicial ao iniciar o container
 CMD ["bash"]
